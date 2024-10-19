@@ -3,7 +3,6 @@
 {% block title_h1 %} Signin! {% endblock title_h1 %}
 {% block title_h2 %} And start to sell products. {% endblock title_h2 %}
 {% block content %}
-{{error}}
 <form method="POST" class="container m-5">
     {% csrf_token %}
     {{ form.as_p }}

@@ -3,12 +3,11 @@
 {% block title_h1 %} My account {% endblock title_h1 %}
 {% block title_h2 %} Manage your account. {% endblock title_h2 %}
 {% block content %}
-{{error}}
 <form action="{% url 'account' %}" method="POST" enctype="multipart/form-data" class="container m-5">
     {% csrf_token %}
     {{form.as_p}}
 <button class="btn btn-primary">Update</button>
 </form>
 <img height="50px" src="{{avatar_url}}" alt="User avatar profile">
-
+<a class="btn btn-primary m-3" aria-current="page" href="{% url 'home' %}">Home</a>
 {% endblock %}

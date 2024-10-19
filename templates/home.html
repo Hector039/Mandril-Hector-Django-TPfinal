@@ -16,7 +16,6 @@
 </form>
 {% endblock %}
 {% block content %}
-{{error}}
 <section class="p-5">
     <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
         
@@ -56,18 +55,5 @@
     </div>
     
 </section>
-
-{% if messages %}
-{% for message in messages %}
-<div class="toast align-items-center text-white {{ message.tags }} border-0" role="alert" aria-live="assertive" aria-atomic="true">
-    <div class="d-flex">
-        <div class="toast-body">
-            {{ message }}
-        </div>
-        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-    </div>
-</div>
-{% endfor %}
-{% endif %}  
 
 {% endblock %}

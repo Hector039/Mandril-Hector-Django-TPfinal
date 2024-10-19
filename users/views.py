@@ -6,22 +6,26 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from products.forms import ProductSearchForm
 from django.contrib import messages
+from products.models import Product
 
 def signIn(req):
     if req.method == "POST":
         try:
             user = authenticate(req, email=req.POST['email'], password=req.POST['password'])
         except Exception as error:
-            render(req, "signin.html", {"form": CustomUserLoginForm, "error": error})
+            messages.error(req, error)
+            render(req, "signin.html", {"form": CustomUserLoginForm})
 
         if user is None:
-            return render(req, "signin.html", {"form": CustomUserLoginForm, "error": "User name o password incorrect"})
+            messages.error(req, "User name o password incorrect")
+            return render(req, "signin.html", {"form": CustomUserLoginForm})
         else:
             login(req, user)
             searchForm = ProductSearchForm(req.GET)
             userLogued = get_object_or_404(CustomUser, pk=user.id)
+            products = Product.objects.all()
             messages.success(req, f"Welcome {userLogued.first_name}!")
-            return render(req, 'home.html', {"avatar_url": userLogued.avatar.url, 'searchForm': searchForm})
+            return render(req, 'home.html', {"avatar_url": userLogued.avatar.url, 'products': products, 'searchForm': searchForm})
 
     return render(req, "signIn.html", {"form": CustomUserLoginForm})
 
@@ -34,9 +38,11 @@ def signUp(req):
                                                email = req.POST["email"], 
                                                password = req.POST["password1"], 
                                                age = req.POST["age"])
+                messages.success(req, "User registered successfully")
                 return redirect('home')
             except IntegrityError:
-                return render(req, "signup.html", {"form": CustomUserCreationForm, "error": "You must be over 18 years old to register"})
+                messages.error(req, "You must be over 18 years old to register")
+                return render(req, "signup.html", {"form": CustomUserCreationForm})
         else:
             return render(req,"signup.html", {"form": CustomUserCreationForm, "error": "Passwords must be equals"})
     return render(req, "signUp.html", {"form": CustomUserCreationForm})
@@ -58,7 +64,8 @@ def updateUser(req):
             messages.success(req, "User updated successfully")
             return render(req, "account.html", {"form": userUpdateform, "avatar_url": user.avatar.url})
         except Exception as error:
-            return render(req, "account.html", {"form": userUpdateform, "error": error, "avatar_url": user.avatar.url})
+            messages.error(req, error)
+            return render(req, "account.html", {"form": userUpdateform, "avatar_url": user.avatar.url})
             
         
     user = get_object_or_404(CustomUser, pk=req.user.id)

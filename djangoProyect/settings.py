@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'users',
     'products',
     'carts',
-    'django_bootstrap5',
 ]
 
 MIDDLEWARE = [
@@ -139,9 +138,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 MESSAGE_TAGS = {
-    messages.DEBUG: 'bg-dark',
-    messages.INFO: 'bg-info',
-    messages.SUCCESS: 'bg-success',
-    messages.WARNING: 'bg-warning',
-    messages.ERROR: 'bg-danger',
+    messages.DEBUG: 'alert-info',
+    messages.INFO: 'alert-info',
+    messages.SUCCESS: 'alert-success',
+    messages.WARNING: 'alert-warning',
+    messages.ERROR: 'alert-danger',
 }

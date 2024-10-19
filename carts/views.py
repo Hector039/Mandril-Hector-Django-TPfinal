@@ -4,9 +4,10 @@ from products.models import Product
 from products.forms import ProductSearchForm
 from .models import Cart
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 @login_required
-def getUserCart(req, uid, msg='', err=''):
+def getUserCart(req, uid):
     try:
         userLogued = get_object_or_404(CustomUser, pk=req.user.id).avatar.url if req.user.id else '#'
         cart = Cart.objects.filter(userId=uid)
@@ -16,10 +17,11 @@ def getUserCart(req, uid, msg='', err=''):
         total = 0
         for subTotal in cart:
             total = total + subTotal.subtotal
-
-        return render(req, "cart-detail.html", {"avatar_url": userLogued, "cart": cart, "total": total, "message": msg})
-    except Exception:
-        return render(req, "cart-detail.html", {"avatar_url": userLogued, "cart": cart, "total": total, "error": err})
+        
+        return render(req, "cart-detail.html", {"avatar_url": userLogued, "cart": cart, "total": total})
+    except Exception as error:
+        messages.error(req, error)
+        return render(req, "cart-detail.html", {"avatar_url": userLogued, "cart": cart, "total": total})
     
     
 
@@ -32,9 +34,11 @@ def emptyCart(req, uid):
     try:
         cart = Cart.objects.filter(userId=uid).delete()
         if cart[0] != 0:
-            return getUserCart(req, uid, msg='Cart is now empty.')
+            messages.success(req, 'Your cart is now empty.')
+            return getUserCart(req, uid)
     except Exception as error:
-        return getUserCart(req, uid, err=error)
+        messages.error(req, error)
+        return getUserCart(req, uid)
 
 @login_required
 def deleteProductCart(req, uid, pid):
@@ -43,9 +47,11 @@ def deleteProductCart(req, uid, pid):
         product = Product.objects.get(id=pid)
         cart = Cart.objects.get(userId=user, productId=product).delete()
         if cart[0] != 0:
-            return getUserCart(req, uid, msg=f'The product ID: {pid} was successfully removed.')
+            messages.success(req, f'{product.title} was successfully removed.')
+            return getUserCart(req, uid)
     except Exception as error:
-        return getUserCart(req, uid, err=error)
+        messages.error(req, error)
+        return getUserCart(req, uid)
 
 @login_required
 def buyCart(req, uid):
@@ -62,9 +68,11 @@ def addToCart(req, uid, pid):
             newProductToCart = Cart(id=None, userId=user, productId=product, quantity=req.POST["quantity"])
             newProductToCart.save()
             products = Product.objects.all()
+            messages.success(req, f"{product.title} was added to your cart")
             return render(req, "home.html", {"avatar_url": userLogued, "products": products, 'searchForm': searchForm})
         except Exception as error:
             products = Product.objects.all()
-            return render(req, "home.html", {"avatar_url": userLogued, "products": products, "error": error, 'searchForm': searchForm})
+            messages.error(req, error)
+            return render(req, "home.html", {"avatar_url": userLogued, "products": products, 'searchForm': searchForm})
         
     return getUserCart(req, uid)

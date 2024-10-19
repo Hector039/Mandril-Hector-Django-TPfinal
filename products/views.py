@@ -3,6 +3,7 @@ from .models import Product
 from .forms import ProductForm, ProductSearchForm
 from users.models import CustomUser
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 def getProducts(req):
     searchForm = ProductSearchForm(req.GET)
@@ -40,9 +41,11 @@ def createProduct(req):
         try:
             owner = CustomUser.objects.get(id=req.user.id)
             Product.objects.create(title = req.POST["title"], description = req.POST["description"], price = req.POST["price"], stock = req.POST["stock"], category = req.POST["category"], owner = owner) 
-            return render(req, "product-create.html", {"avatar_url": userLogued, "form": productform, "message": 'Product created successfully'})
+            messages.success(req, 'The product was created correctly')
+            return render(req, "product-create.html", {"avatar_url": userLogued, "form": productform})
         except Exception as error:
-            return render(req, "product-create.html", {"avatar_url": userLogued, "form": productform, "error": error})
+            messages.error(req, error)
+            return render(req, "product-create.html", {"avatar_url": userLogued, "form": productform})
     else:
         return render(req, "product-create.html", {"avatar_url": userLogued, "form": productform})
 
@@ -54,9 +57,11 @@ def updateProduct(req, pid):
             product = get_object_or_404(Product, pk=pid)
             productform = ProductForm(req.POST, instance=product)
             productform.save()
+            messages.success(req, 'The product was updated correctly')
             return render(req, "product-update.html", {"avatar_url": userLogued, "form": productform, "product": product})
         except Exception as error:
-            return render(req, "product-update.html", {"avatar_url": userLogued, "form": productform, "product": product, "error": error})
+            messages.error(req, error)
+            return render(req, "product-update.html", {"avatar_url": userLogued, "form": productform, "product": product})
             
     product = get_object_or_404(Product, pk=pid)    
     productform = ProductForm(instance=product)
@@ -70,10 +75,12 @@ def deleteProduct(req, pid):
         product.delete()
         searchForm = ProductSearchForm(req.GET)
         products = Product.objects.all()
+        messages.success(req, 'The product was deleted correctly')
         return render(req, "home.html", {"avatar_url": userLogued, "products": products, 'searchForm': searchForm})
     except Exception as error:
         productform = ProductForm(instance=product)
-        return render(req, "product-update.html", {"avatar_url": userLogued, "form": productform, "product": product, "error": error})
+        messages.error(req, error)
+        return render(req, "product-update.html", {"avatar_url": userLogued, "form": productform, "product": product})
 
 @login_required
 def buyProduct(req, pid):
