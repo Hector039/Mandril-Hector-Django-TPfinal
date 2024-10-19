@@ -1,0 +1,73 @@
+{% extends 'main.html' %}
+
+{% block home_form %}
+<form action="{% url 'home' %}" method="get" class="row g-3 p-5">
+    {% csrf_token %}
+    <div class="col">
+        {{searchForm.title}}
+    </div>
+    <div class="col">
+        {{searchForm.price}}
+    </div>
+    <div class="col">
+        {{searchForm.category}}
+    </div>
+    <button class="btn btn-primary col">Search</button>
+</form>
+{% endblock %}
+{% block content %}
+{{error}}
+<section class="p-5">
+    <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+        
+        {% for product in products %}
+        <div class="col mb-5">
+            <div class="card h-100">
+                <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale</div>
+                <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." />
+                <div class="card-body p-4">
+                    <div class="text-center">
+                        <h5 class="fw-bolder">{{product.title}}</h5>
+                        {{product.price}}
+                    </div>
+                </div>
+                <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                    
+                    {% if user.is_authenticated and user != product.owner %}
+                    <form action="{% url 'add-to-cart' user.id product.id %}" method="post" class="row p-3 align-items-center">
+                        {% csrf_token %}
+                        <div class="col">
+                        <label for="quantity">Quantity:</label>
+                        <input type="number" name="quantity" id="quantity" min="1" value="1" class="form-control">
+                        </div>
+                        <div class="col align-self-end">
+                            <button class="btn btn-outline-dark mt-auto">Add to cart</button>
+                        </div> 
+                    </form>
+                    <a href="{% url 'product-buy' product.id %}" class="btn btn-outline-dark mt-auto">Buy</a>{{message}}
+                    {% endif %}
+                    <a class="btn btn-outline-dark mt-auto" href="{% url 'product-detail' product.id %}">Detail</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p>There are no products yet</p>
+        {% endfor %}
+    </div>
+    
+</section>
+
+{% if messages %}
+{% for message in messages %}
+<div class="toast align-items-center text-white {{ message.tags }} border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="d-flex">
+        <div class="toast-body">
+            {{ message }}
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+</div>
+{% endfor %}
+{% endif %}  
+
+{% endblock %}

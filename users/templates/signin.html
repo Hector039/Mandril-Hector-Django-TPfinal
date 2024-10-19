@@ -1,0 +1,24 @@
+{% extends 'main.html' %}
+{% block title %} Login {% endblock title %}
+{% block title_h1 %} Login! {% endblock title_h1 %}
+{% block title_h2 %} And start to buy/sell products. {% endblock title_h2 %}
+
+{% block content %}
+{{error}}
+    <form method="POST" class="m-5">
+    {% csrf_token %}
+        {% csrf_token %}
+        <p>{{form.email}}</p>
+        <p>{{form.password}}</p>
+    <button class="btn btn-primary">Sign me in!</button>
+</form>
+</div>
+
+
+
+
+{% endblock %}
+
+
+
+

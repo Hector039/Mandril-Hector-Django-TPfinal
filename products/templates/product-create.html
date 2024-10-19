@@ -1,0 +1,12 @@
+{% extends 'main.html' %}
+{% block title %} Create {% endblock title %}
+{% block title_h1 %} Create {% endblock title_h1 %}
+{% block title_h2 %} your product {% endblock title_h2 %}
+{% block content %}
+{{error}} {{message}}
+<form action="{% url 'product-create' %}" method="POST"  class="container m-5">
+    {% csrf_token %}
+    {{form.as_p}}
+<button class="btn btn-primary">Create</button>
+</form>
+{% endblock %}

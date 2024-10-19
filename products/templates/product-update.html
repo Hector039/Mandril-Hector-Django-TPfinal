@@ -1,0 +1,14 @@
+{% extends 'main.html' %}
+{% block title %} Update {% endblock title %}
+{% block title_h1 %} Update {% endblock title_h1 %}
+{% block title_h2 %} your product. {% endblock title_h2 %}
+{% block content %}
+{{error}}
+<form action="{% url 'product-update' product.id %}" method="POST" class="container m-5">
+    {% csrf_token %}
+    {{form.as_p}}
+<button class="btn btn-primary">Update</button>
+<a href="{% url 'product-delete' product.id %}" class="btn btn-primary">Delete</a>
+</form>
+
+{% endblock %}
