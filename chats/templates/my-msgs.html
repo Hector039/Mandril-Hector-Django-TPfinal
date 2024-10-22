@@ -1,0 +1,19 @@
+{% extends 'main.html' %}
+{% block title %} My messages {% endblock title %}
+{% block title_h1 %} My messages {% endblock title_h1 %}
+{% block title_h2 %} history {% endblock title_h2 %}
+{% block content %}
+
+{% for chat in chats %}
+<div>
+    {% if chat.user1_id.id != user.id %}
+    <a class="btn btn-primary m-3" aria-current="page" href="{% url 'msg-detail' chat.user1_id.id %}">Chat with {{chat.user1_id.first_name}}</a> 
+    {% else %}
+    <a class="btn btn-primary m-3" aria-current="page" href="{% url 'msg-detail' chat.user2_id.id %}">Chat with {{chat.user2_id.first_name}}</a> 
+    {% endif %}
+</div>
+{% empty %}
+<p class="text-center m-5">There are no chats yet</p>
+{% endfor %}
+<a class="btn btn-primary m-3" aria-current="page" href="{% url 'home' %}">Home</a>
+{% endblock %}

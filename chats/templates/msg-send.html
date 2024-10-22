@@ -1,0 +1,13 @@
+{% extends 'main.html' %}
+{% block title %} Chats {% endblock title %}
+{% block title_h1 %} Send message {% endblock title_h1 %}
+{% block title_h2 %} to seller {% endblock title_h2 %}
+{% block content %}
+<h3>Sending message to {{to_user}}</h3>
+<form action="{% url 'msg-send' to %}" method="POST"  class="container m-5">
+    {% csrf_token %}
+    {{form.as_p}}
+<button class="btn btn-primary">Send</button>
+</form>
+<a class="btn btn-primary m-3" aria-current="page" href="{% url 'home' %}">Home</a>
+{% endblock %}

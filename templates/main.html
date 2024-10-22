@@ -20,12 +20,10 @@
                     <li class="nav-item"><a class="nav-link active" aria-current="page" href="{% url 'home' %}">Home</a>
                     </li>
                     {% if user.is_authenticated %}
-                    <li class="nav-item"><a class="nav-link" aria-current="page"
-                            href="{% url 'product-create' %}">Create product</a></li>
-                    <li class="nav-item"><a class="nav-link" aria-current="page"
-                            href="{% url 'cart-detail' user.id %}">My cart</a></li>
-                    <li class="nav-item"><a class="nav-link" aria-current="page" href="{% url 'account' %}">My
-                            account</a></li>
+                    <li class="nav-item"><a class="nav-link" aria-current="page" href="{% url 'product-create' %}">Create product</a></li>
+                    <li class="nav-item"><a class="nav-link" aria-current="page" href="{% url 'cart-detail' user.id %}">My cart</a></li>
+                    <li class="nav-item"><a class="nav-link" aria-current="page" href="{% url 'account' %}">My account</a></li>
+                    <li class="nav-item"><a class="nav-link" aria-current="page" href="{% url 'my-msgs' %}">My messages</a></li>
                     {% else %}
                     <li class="nav-item"><a class="nav-link" aria-current="page" href="{% url 'signup' %}">Register</a>
                     </li>
