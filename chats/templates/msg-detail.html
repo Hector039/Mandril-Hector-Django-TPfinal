@@ -20,7 +20,7 @@
             {% endif %}
         </div>
         <div class="row justify-content-start">
-            <strong class="col-auto">{{chat.message}}</strong>
+            <strong class="col-auto text-break">{{chat.message}}</strong>
         </div>
     </div>
 
@@ -29,17 +29,17 @@
     {% else %}
     <div class="row justify-content-end my-3 px-2 ">
         <div class="bg-success bg-gradient rounded-start-3 col-5 p-2">
-            <div class="row justify-content-end">
-                <p class="col-auto">you:</p>
-                <p class="col-auto fw-lighter text-black-50">{{chat.date}}</p>
+            <div class="row justify-content-start">
+                <p class="col-auto text-white">you:</p>
+                <p class="col-auto fw-lighter text-white-50">{{chat.date}}</p>
                 {% if chat.seen %}
-                <em class="col-auto fw-lighter text-primary">seen</em>
+                <em class="col-auto fw-lighter text-white">seen</em>
                 {% else %}
-                <em class="col-auto fw-lighter text-primary">(!)</em>
+                <em class="col-auto fw-lighter text-white">(!)</em>
                 {% endif %}
             </div>
             <div class="row justify-content-end">
-                <strong class="col-auto">{{chat.message}}</strong>
+                <strong class="col-auto text-break">{{chat.message}}</strong>
             </div>
 
         </div>
@@ -67,8 +67,7 @@
 </div>
 <div class="container">
     <div class="row">
-        <a class="btn btn-primary m-3 col align-self-center" aria-current="page" href="{% url 'my-msgs' %}">Back to
-            chats</a>
+        <a class="btn btn-primary m-3 col align-self-center" aria-current="page" href="{% url 'my-msgs' %}">Back to chats</a>
         <a class="btn btn-primary m-3 col align-self-center" aria-current="page" href="{% url 'home' %}">Home</a>
     </div>
 </div>

@@ -34,8 +34,14 @@
                 </ul>
             </div>
             {% if user.is_authenticated %}
-            <img height="50px" src="{{avatar_url}}" alt="User avatar profile">
-            <a class="nav-link" aria-current="page" href="{% url 'logout' %}">Logout</a>
+            <div class="row ">
+                <img height="50px" class="col" src="{{avatar_url}}" alt="User avatar profile">
+                <div class="col bg-primary text-white text-center">
+                    <a class="nav-link" aria-current="page" href="{% url 'account' %}">{{user.email}}</a>
+                    <a class="nav-link" aria-current="page" href="{% url 'logout' %}">Logout</a>
+                </div>
+            </div>
+            
             {% endif %}
         </div>
     </nav>

@@ -40,11 +40,11 @@ class ProductForm(ModelForm):
                 })
         }
         labels = {
-            "title": "",
-            "description": "",
-            "price": "",
-            "stock": "",
-            "category": ""
+            "title": "Title:",
+            "description": "Description:",
+            "price": "Price:",
+            "stock": "Stock:",
+            "category": "Category:"
         }
 
 class ProductSearchForm(forms.Form):

@@ -51,11 +51,16 @@ def getUserMsgs(req, uid):
         if req.method == 'POST':
             chat = ChatRegister.objects.get(Q(user1_id=fromUser, user2_id=toUser) | Q(user1_id=toUser, user2_id=fromUser))
             Message.objects.create(chat_id=chat, to_id=toUser, from_id=fromUser, message=req.POST["message"])
-            messages = Message.objects.filter(Q(to_id=fromUser, from_id=toUser) | Q(to_id=toUser, from_id=fromUser))
+            messages = Message.objects.filter(Q(to_id=fromUser, from_id=toUser) | Q(to_id=toUser, from_id=fromUser)).order_by('date')
+
             info.success(req, "Message send!")
             return render(req, "msg-detail.html", {"avatar_url": userLogued, "form": messageForm, "chats": messages, "to": toUser.id, "to_user": f"{toUser.first_name} {toUser.last_name}:"})
         
-        messages = Message.objects.filter(Q(to_id=fromUser, from_id=toUser) | Q(to_id=toUser, from_id=fromUser))
+        messages = Message.objects.filter(Q(to_id=fromUser, from_id=toUser) | Q(to_id=toUser, from_id=fromUser)).order_by('date')
+
+        chat = ChatRegister.objects.get(Q(user1_id=fromUser, user2_id=toUser) | Q(user1_id=toUser, user2_id=fromUser))
+        Message.objects.filter(Q(chat_id=chat, to_id=fromUser, seen=False)).update(seen=True)
+
         return render(req, "msg-detail.html", {"avatar_url": userLogued, "form": messageForm, "chats": messages, "to": toUser.id, "to_user": f"{toUser.first_name} {toUser.last_name}:"})
     except Exception as error:
         info.error(req, error)

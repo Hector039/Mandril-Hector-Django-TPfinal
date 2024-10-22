@@ -2,11 +2,13 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .forms import CustomUserCreationForm, CustomUserLoginForm, CustomUserUpdateForm
 from .models import CustomUser
 from django.db import IntegrityError
+from django.db.models import Q
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from products.forms import ProductSearchForm
 from django.contrib import messages
 from products.models import Product
+from chats.models import Message
 
 def signIn(req):
     if req.method == "POST":
@@ -24,7 +26,11 @@ def signIn(req):
             searchForm = ProductSearchForm(req.GET)
             userLogued = get_object_or_404(CustomUser, pk=user.id)
             products = Product.objects.all()
-            messages.success(req, f"Welcome {userLogued.first_name}!")
+
+            msgsUnreaded = Message.objects.filter(Q(to_id=userLogued, seen=False)).count()
+            if msgsUnreaded != 0:
+                messages.warning(req, f"You have {msgsUnreaded} unread messages.")
+
             return render(req, 'home.html', {"avatar_url": userLogued.avatar.url, 'products': products, 'searchForm': searchForm})
 
     return render(req, "signIn.html", {"form": CustomUserLoginForm})
