@@ -11,7 +11,7 @@ category_choices = (
         ('computing', 'Computing'))
 
 class ProductForm(ModelForm):
-    category = forms.ChoiceField(choices=category_choices, widget = Select(attrs={'class': 'form-control', 'style': 'max-width: 300px;'}), label='')
+    category = forms.ChoiceField(choices=category_choices, widget = Select(attrs={'class': 'form-control', 'style': 'max-width: 300px;'}), label='Category')
 
     class Meta:
         model = Product
@@ -20,23 +20,19 @@ class ProductForm(ModelForm):
             'title': TextInput(attrs={
                 'class': "form-control",
                 'style': 'max-width: 300px;',
-                'placeholder': 'Title'
                 }),
             'description': Textarea(attrs={
                 'class': "form-control",
                 'style': 'max-width: 300px;',
-                'placeholder': 'Description'
                 }),
             'price': NumberInput(attrs={
                 'class': "form-control", 
                 'style': 'max-width: 300px;',
-                'placeholder': 'Price',
                 'step': 0.25
                 }),
             'stock': NumberInput(attrs={
                 'class': "form-control", 
                 'style': 'max-width: 300px;',
-                'placeholder': 'Stock'
                 })
         }
         labels = {
@@ -44,7 +40,6 @@ class ProductForm(ModelForm):
             "description": "Description:",
             "price": "Price:",
             "stock": "Stock:",
-            "category": "Category:"
         }
 
 class ProductSearchForm(forms.Form):

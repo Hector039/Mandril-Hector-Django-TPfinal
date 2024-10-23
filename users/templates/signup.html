@@ -3,11 +3,17 @@
 {% block title_h1 %} Signin! {% endblock title_h1 %}
 {% block title_h2 %} And start to sell products. {% endblock title_h2 %}
 {% block content %}
-<form method="POST" class="container m-5">
+<div class="row justify-content-center align-items-center m-5">
+<form method="POST" class="col-4">
     {% csrf_token %}
     {{ form.as_p }}
-    <button class="btn btn-primary">Sign me up!</button>
+    <div class="d-flex justify-content-center mt-4">
+        <button class="btn btn-primary mx-4">Sign me up!</button>
+        <a class="btn btn-primary mx-4" aria-current="page" href="{% url 'home' %}">Home</a>
+    </div>
 </form>
+</div>
+
 
 {% endblock %}
 

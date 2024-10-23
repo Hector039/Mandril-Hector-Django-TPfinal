@@ -3,10 +3,17 @@
 {% block title_h1 %} Create {% endblock title_h1 %}
 {% block title_h2 %} your product {% endblock title_h2 %}
 {% block content %}
-<form action="{% url 'product-create' %}" method="POST"  class="container m-5">
-    {% csrf_token %}
-    {{form.as_p}}
-<button class="btn btn-primary">Create</button>
-</form>
-<a class="btn btn-primary m-3" aria-current="page" href="{% url 'home' %}">Home</a>
+<div class="d-flex justify-content-center p-5">
+    <form action="{% url 'product-create' %}" method="POST">
+        {% csrf_token %}
+        {{form.as_p}}
+        <div class="d-flex justify-content-center">
+            <button class="btn btn-primary  m-3">Create</button>
+            <a class="btn btn-primary m-3 " aria-current="page" href="{% url 'home' %}">Home</a>
+        </div>
+    </form>
+
+</div>
+
+
 {% endblock %}

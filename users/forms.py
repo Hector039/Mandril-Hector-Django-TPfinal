@@ -57,7 +57,7 @@ class CustomUserCreationForm(UserCreationForm):
         }
 
 class CustomUserUpdateForm(ModelForm):
-    avatar = forms.ImageField(required=False, widget=FileInput(attrs={'class': "form-control", 'style': 'max-width: 300px;'}), label='')
+    avatar = forms.ImageField(required=False, widget=FileInput(attrs={'class': "form-control", 'style': 'max-width: 300px;'}), label='Avatar')
     class Meta:
         model = CustomUser
         fields = ["first_name", "last_name", 'email', "age"]

@@ -17,15 +17,15 @@
     </thead>
     <tbody>
         {% for product in cart %}
-                <tr>
-                    <th><a href="{% url 'cart-product-delete' user.id product.productId.id %}">X</a></th>
-                    <th>{{product.productId}}</th>
-                    <th>${{product.productId.price}}</th>
-                    <th>{{product.quantity}}</th>
-                    <th>${{product.subtotal}}</th>
-                    <th></th>
-                </tr>
-                {% empty %}
+        <tr>
+            <th><a href="{% url 'cart-product-delete' user.id product.productId.id %}">X</a></th>
+            <th>{{product.productId}}</th>
+            <th>${{product.productId.price}}</th>
+            <th>{{product.quantity}}</th>
+            <th>${{product.subtotal}}</th>
+            <th></th>
+        </tr>
+        {% empty %}
         <h2 class="text-center m-5">There are no products yet</h2>
         {% endfor %}
     </tbody>
@@ -40,11 +40,14 @@
         </tr>
     </tfoot>
 </table>
-{% if cart|length != 0 %}
-<a href="{% url 'empty-cart' user.id %}" class="btn btn-primary m-3">Empty cart</a> {{message}} {{error}}
-{% if user.is_authenticated and user != product.owner %}
-<a href="{% url 'product-buy' user.id %}" class="btn btn-primary m-3">Buy</a>
-{% endif %}
-{% endif %}
-<a class="btn btn-primary m-3" aria-current="page" href="{% url 'home' %}">Home</a>
+
+    <div class="d-flex justify-content-center m-4">
+        {% if cart|length != 0 %}
+        <a href="{% url 'empty-cart' user.id %}" class="btn btn-primary mx-5">Empty cart</a>
+        {% if user.is_authenticated and user != product.owner %}
+        <a href="{% url 'product-buy' user.id %}" class="btn btn-primary mx-5">Buy</a>
+        {% endif %}
+        {% endif %}
+        <a class="btn btn-primary mx-5" aria-current="page" href="{% url 'home' %}">Home</a>
+    </div>
 {% endblock %}

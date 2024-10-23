@@ -4,72 +4,97 @@
 {% block title_h2 %} history {% endblock title_h2 %}
 {% block content %}
 
-<h3>Chat with {{to_user}}</h3>
-<div class="m-5 p-3 bg-secondary bg-gradient rounded-3">
-    {% for chat in chats %}
+<div class="d-flex justify-content-center m-4">
+    <h3>Chat with: {{to_user}}</h3>
+</div>
 
-    {% if chat.to_id.id == user.id %}
-    <div class="bg-light bg-gradient rounded-end-3 m-3 p-2 col-5">
-        <div class="row justify-content-start">
-            <p class="col-auto">{{chat.from_id.first_name}} says:</p>
-            <p class="col-auto fw-lighter text-black-50">{{chat.date}}</p>
-            {% if chat.seen %}
-            <em class="col-auto fw-lighter text-primary">seen</em>
-            {% else %}
-            <em class="col-auto fw-lighter text-primary">(!)</em>
-            {% endif %}
-        </div>
-        <div class="row justify-content-start">
-            <strong class="col-auto text-break">{{chat.message}}</strong>
-        </div>
-    </div>
+<div class="container">
 
+    <div class="row ">
 
-
-    {% else %}
-    <div class="row justify-content-end my-3 px-2 ">
-        <div class="bg-success bg-gradient rounded-start-3 col-5 p-2">
-            <div class="row justify-content-start">
-                <p class="col-auto text-white">you:</p>
-                <p class="col-auto fw-lighter text-white-50">{{chat.date}}</p>
-                {% if chat.seen %}
-                <em class="col-auto fw-lighter text-white">seen</em>
+        <div class="col-2 border border-primary">
+            {% for chat in channels %}
+            <div class="nav flex-column">
+                {% if chat.user1_id.id != user.id %}
+                <a class="btn btn-primary m-3" aria-current="page" href="{% url 'msg-detail' chat.user1_id.id %}">Chat
+                    with
+                    {{chat.user1_id.first_name}}</a>
                 {% else %}
-                <em class="col-auto fw-lighter text-white">(!)</em>
+                <a class="btn btn-primary m-3" aria-current="page" href="{% url 'msg-detail' chat.user2_id.id %}">Chat
+                    with
+                    {{chat.user2_id.first_name}}</a>
                 {% endif %}
             </div>
-            <div class="row justify-content-end">
-                <strong class="col-auto text-break">{{chat.message}}</strong>
+            {% empty %}
+            <p class="text-center m-5">There are no chats yet</p>
+            {% endfor %}
+        </div>
+
+        <div class="col p-3 bg-secondary bg-gradient rounded-3">
+            {% for chat in chats %}
+
+            {% if chat.to_id.id == user.id %}
+            <div class="bg-light bg-gradient rounded-end-3 m-3 p-2 col-5">
+                <div class="row justify-content-start">
+                    <p class="col-auto">{{chat.from_id.first_name}} says:</p>
+                    <p class="col-auto fw-lighter text-black-50">{{chat.date}}</p>
+                    {% if chat.seen %}
+                    <em class="col-auto fw-lighter text-primary">seen</em>
+                    {% else %}
+                    <em class="col-auto fw-lighter text-primary">(!)</em>
+                    {% endif %}
+                </div>
+                <div class="row justify-content-start">
+                    <strong class="col-auto text-break">{{chat.message}}</strong>
+                </div>
             </div>
 
+
+
+            {% else %}
+            <div class="row justify-content-end my-3 px-4 ">
+                <div class="bg-success bg-gradient rounded-start-3 col-5 p-2">
+                    <div class="row justify-content-start">
+                        <p class="col-auto text-white">you:</p>
+                        <p class="col-auto fw-lighter text-white-50">{{chat.date}}</p>
+                        {% if chat.seen %}
+                        <em class="col-auto fw-lighter text-white">seen</em>
+                        {% else %}
+                        <em class="col-auto fw-lighter text-white">(!)</em>
+                        {% endif %}
+                    </div>
+                    <div class="row justify-content-end">
+                        <strong class="col-auto text-break">{{chat.message}}</strong>
+                    </div>
+
+                </div>
+            </div>
+            {% endif %}
+
+            {% empty %}
+            <p class="text-center m-5">Select a user to chat.</p>
+            {% endfor %}
+
+            {% if to is not None %}
+            <form action="{% url 'msg-detail' to %}" method="POST" class="container py-3">
+                {% csrf_token %}
+                <div class="row justify-content-center m-3">
+                    <div class="col-10">
+                        {{form.as_table}}
+                    </div>
+                    <div class="col-auto">
+                        <button class="btn btn-primary">Send</button>
+                    </div>
+                </div>
+            </form>
+            {% endif %}
+
         </div>
+
     </div>
-
-
-
-
-    {% endif %}
-    {% endfor %}
-
-    <form action="{% url 'msg-detail' to %}" method="POST" class="container">
-        {% csrf_token %}
-        <div class="row justify-content-center m-3">
-            <div class="col-10">
-                {{form.as_table}}
-            </div>
-            <div class="col-auto">
-                <button class="btn btn-primary">Send</button>
-            </div>
-
-        </div>
-
-    </form>
 </div>
-<div class="container">
-    <div class="row">
-        <a class="btn btn-primary m-3 col align-self-center" aria-current="page" href="{% url 'my-msgs' %}">Back to chats</a>
-        <a class="btn btn-primary m-3 col align-self-center" aria-current="page" href="{% url 'home' %}">Home</a>
-    </div>
+<div class="d-flex justify-content-center">
+    <a class="btn btn-primary m-3 " aria-current="page" href="{% url 'home' %}">Home</a>
 </div>
 
 {% endblock %}

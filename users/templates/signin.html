@@ -4,14 +4,20 @@
 {% block title_h2 %} And start to buy/sell products. {% endblock title_h2 %}
 
 {% block content %}
-    <form method="POST" class="m-5">
+<div class="row justify-content-center align-items-center m-5">
+    <form method="POST" class="col-4">
     {% csrf_token %}
         {% csrf_token %}
         <p>{{form.email}}</p>
         <p>{{form.password}}</p>
-    <button class="btn btn-primary">Sign me in!</button>
+        <div class="d-flex justify-content-center mt-4">
+            <button class="btn btn-primary mx-4">Sign me in!</button>
+            <a class="btn btn-primary mx-4" aria-current="page" href="{% url 'home' %}">Home</a>
+        </div>
+    
 </form>
 </div>
+    
 
 
 
