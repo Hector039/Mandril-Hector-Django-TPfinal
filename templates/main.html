@@ -38,6 +38,7 @@
                 <img height="50px" class="col" src="{{avatar_url}}" alt="User avatar profile">
                 <div class="col bg-primary text-white text-center">
                     <a class="nav-link" aria-current="page" href="{% url 'account' %}">{{user.email}}</a>
+                    <p class="last-login-text">{{last_login}}</p>
                     <a class="nav-link" aria-current="page" href="{% url 'logout' %}">Logout</a>
                 </div>
             </div>

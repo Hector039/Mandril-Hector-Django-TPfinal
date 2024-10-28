@@ -3,6 +3,7 @@ from .models import CustomUser
 from django.forms import ModelForm, TextInput, EmailInput, NumberInput, PasswordInput, HiddenInput, FileInput
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import PasswordChangeForm
 
 class CustomUserLoginForm(AuthenticationForm):
     username = forms.CharField(widget=HiddenInput(attrs={'placeholder': 'username..', 'class': "form-control", 'style': 'max-width: 300px;'}), label='')
@@ -89,3 +90,20 @@ class CustomUserUpdateForm(ModelForm):
             "email": "E-mail:",
             "age": "Age:"
         }
+
+class ChangePasswordForm(PasswordChangeForm):
+    old_password = forms.CharField(widget=forms.PasswordInput(attrs={
+                'class': "form-control mb-4 align-self-center", 
+                'style': 'max-width: 300px;',
+                'placeholder': 'Old Password:'
+                }), label='')
+    new_password1 = forms.CharField(widget=forms.PasswordInput(attrs={
+                'class': "form-control mb-4 align-self-center", 
+                'style': 'max-width: 300px;',
+                'placeholder': 'New Password:'
+                }), label='')
+    new_password2 = forms.CharField(widget=forms.PasswordInput(attrs={
+                'class': "form-control mb-4 align-self-center", 
+                'style': 'max-width: 300px;',
+                'placeholder': 'New Password again:'
+                }), label='')

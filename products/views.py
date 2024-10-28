@@ -1,4 +1,7 @@
 from django.shortcuts import render, get_object_or_404
+from django.views.generic.detail import DetailView
+from django.views.generic.edit import CreateView
+from django.urls import reverse_lazy
 from .models import Product
 from .forms import ProductForm, ProductSearchForm
 from users.models import CustomUser
@@ -10,7 +13,9 @@ def getProducts(req):
     data = searchForm.data.get('title') if searchForm.data.get('title') is not None else ''
     category = searchForm.data.get('category')
     price = searchForm.data.get('price')
-    userLogued = get_object_or_404(CustomUser, pk=req.user.id).avatar.url if req.user.id else '#'
+    userLogued = get_object_or_404(CustomUser, pk=req.user.id) if req.user.id else '#'
+    userAvatar = userLogued.avatar.url if req.user.id else '#'
+    userLastLogin = req.session["last_login"] if req.user.id else '#'
     if category != 'all' and category is not None:
                 if price == 'descending':
                     productsFiltered = Product.objects.filter(category=category).filter(title__icontains=data).order_by('-price').values()
@@ -18,7 +23,7 @@ def getProducts(req):
                     productsFiltered = Product.objects.filter(category=category).filter(title__icontains=data).order_by('price').values()
                 else:
                     productsFiltered = Product.objects.filter(category=category).filter(title__icontains=data)
-                return render(req, "home.html", {"avatar_url": userLogued, "products": productsFiltered, 'searchForm': searchForm})
+                return render(req, "home.html", {"avatar_url": userAvatar, "last_login": userLastLogin, "products": productsFiltered, 'searchForm': searchForm})
     else:
                 if price == 'descending':
                     productsFiltered = Product.objects.filter(title__icontains=data).order_by('-price').values()
@@ -26,65 +31,76 @@ def getProducts(req):
                     productsFiltered = Product.objects.filter(title__icontains=data).order_by('price').values()
                 else:
                     productsFiltered = Product.objects.filter(title__icontains=data)
-                return render(req, "home.html", {"avatar_url": userLogued, "products": productsFiltered, 'searchForm': searchForm})
+                return render(req, "home.html", {"avatar_url": userAvatar, "last_login": userLastLogin, "products": productsFiltered, 'searchForm': searchForm})
 
-def getProduct(req, pid):
-    userLogued = get_object_or_404(CustomUser, pk=req.user.id).avatar.url if req.user.id else '#'
-    product = get_object_or_404(Product, pk=pid)
-    return render(req, "product-detail.html", {"avatar_url": userLogued, "product": product})
+class getProductView(DetailView):
+    model = Product
+    context_object_name = 'product'
+    template_name = "product-detail.html"
 
-@login_required
-def createProduct(req):
-    productform = ProductForm()
-    userLogued = get_object_or_404(CustomUser, pk=req.user.id).avatar.url if req.user.id else '#'
-    if req.method == 'POST':
-        try:
-            owner = CustomUser.objects.get(id=req.user.id)
-            Product.objects.create(title = req.POST["title"], description = req.POST["description"], price = req.POST["price"], stock = req.POST["stock"], category = req.POST["category"], owner = owner) 
-            messages.success(req, 'The product was created correctly')
-            return render(req, "product-create.html", {"avatar_url": userLogued, "form": productform})
-        except Exception as error:
-            messages.error(req, error)
-            return render(req, "product-create.html", {"avatar_url": userLogued, "form": productform})
-    else:
-        return render(req, "product-create.html", {"avatar_url": userLogued, "form": productform})
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        userLogued = CustomUser.objects.get(pk=self.request.user.id) if self.request.user.id else '#'
+        userAvatar = userLogued.avatar.url if self.request.user.id else '#'
+        userLastLogin = self.request.session["last_login"] if self.request.user.id else '#'
+        context["avatar_url"] = userAvatar
+        context["last_login"] = userLastLogin
+        return context
+
+class createProductView(CreateView):
+    model = Product
+    form_class = ProductForm
+    template_name = "product-create.html"
+    success_url = reverse_lazy('product-create')
+
+    def form_valid(self, form):
+        user = CustomUser.objects.get(pk=self.request.user.id)
+        form.instance.owner = user
+        form.save()
+        messages.success(self.request, 'The product was created correctly')
+        return super().form_valid(form)
+     
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        userLogued = CustomUser.objects.get(pk=self.request.user.id)
+        context["avatar_url"] = userLogued.avatar.url
+        context["last_login"] = self.request.session["last_login"]
+        return context
 
 @login_required
 def updateProduct(req, pid):
-    userLogued = get_object_or_404(CustomUser, pk=req.user.id).avatar.url if req.user.id else '#'
     if req.method == 'POST':
         try:
             product = get_object_or_404(Product, pk=pid)
             productform = ProductForm(req.POST, instance=product)
             productform.save()
             messages.success(req, 'The product was updated correctly')
-            return render(req, "product-update.html", {"avatar_url": userLogued, "form": productform, "product": product})
+            return render(req, "product-update.html", {"avatar_url": req.session["avatar_path"], "last_login": req.session["last_login"], "form": productform, "product": product})
         except Exception as error:
             messages.error(req, error)
-            return render(req, "product-update.html", {"avatar_url": userLogued, "form": productform, "product": product})
+            return render(req, "product-update.html", {"avatar_url": req.session["avatar_path"], "last_login": req.session["last_login"], "form": productform, "product": product})
             
     product = get_object_or_404(Product, pk=pid)    
     productform = ProductForm(instance=product)
-    return render(req, "product-update.html", {"avatar_url": userLogued, "form": productform, "product": product})
+    return render(req, "product-update.html", {"avatar_url": req.session["avatar_path"], "last_login": req.session["last_login"], "form": productform, "product": product})
 
 @login_required
 def deleteProduct(req, pid):
-    userLogued = get_object_or_404(CustomUser, pk=req.user.id).avatar.url if req.user.id else '#'
     product = get_object_or_404(Product, pk=pid)
     try:
         product.delete()
         searchForm = ProductSearchForm(req.GET)
         products = Product.objects.all()
         messages.success(req, 'The product was deleted correctly')
-        return render(req, "home.html", {"avatar_url": userLogued, "products": products, 'searchForm': searchForm})
+        return render(req, "home.html", {"avatar_url": req.session["avatar_path"], "last_login": req.session["last_login"], "products": products, 'searchForm': searchForm})
     except Exception as error:
         productform = ProductForm(instance=product)
         messages.error(req, error)
-        return render(req, "product-update.html", {"avatar_url": userLogued, "form": productform, "product": product})
+        return render(req, "product-update.html", {"avatar_url": req.session["avatar_path"], "last_login": req.session["last_login"], "form": productform, "product": product})
 
 @login_required
 def buyProduct(req, pid):
-    userLogued = get_object_or_404(CustomUser, pk=req.user.id).avatar.url if req.user.id else '#'
     products = Product.objects.all()
     searchForm = ProductSearchForm(req.GET)
-    return render(req, "home.html", {"avatar_url": userLogued, "products": products, 'searchForm': searchForm, "message": 'Coming soon'})
+    messages.warning(req, "Comming soon...")
+    return render(req, "home.html", {"avatar_url": req.session["avatar_path"], "last_login": req.session["last_login"], "products": products, 'searchForm': searchForm})

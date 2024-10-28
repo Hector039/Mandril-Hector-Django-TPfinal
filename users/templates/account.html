@@ -9,9 +9,13 @@
             <div class="row justify-content-center">
                 {% csrf_token %}
                 <div class="col-auto">
+                    <p class="col-auto text-muted">Last login: {{last_login}}</p>
+                    <p class="col-auto text-muted">Date joined: {{date_joined}}</p>
+                    <p class="col-auto text-muted">Role: {{user.role}}</p>
                     {{form.as_table}}
-                    <div class="d-flex justify-content-center mt-4">
+                    <div class="d-flex justify-content-center align-items-center mt-4">
                         <button class="btn btn-primary mx-4">Update</button>
+                        <a class="btn btn-warning mx-4" aria-current="page" href="{% url 'change-password' %}">Change your password here</a>
                         <a class="btn btn-primary mx-4" aria-current="page" href="{% url 'home' %}">Home</a>
                     </div>
                 </div>

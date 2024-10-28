@@ -173,6 +173,19 @@ p {
   margin-bottom: 1rem;
 }
 
+.last-login-text{
+  font-size: 12px;
+  margin-bottom: 0;
+}
+
+.prod-card-bg-nostock{
+  background-color: #f8c5c5cb !important;
+}
+
+.prod-card-bg-stock{
+  background-color: #859dee !important;
+}
+
 abbr[title] {
   -webkit-text-decoration: underline dotted;
           text-decoration: underline dotted;

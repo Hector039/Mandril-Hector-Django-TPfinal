@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
 from users.models import CustomUser
 from products.models import Product
 from products.forms import ProductSearchForm
@@ -9,7 +9,6 @@ from django.contrib import messages
 @login_required
 def getUserCart(req, uid):
     try:
-        userLogued = get_object_or_404(CustomUser, pk=req.user.id).avatar.url if req.user.id else '#'
         cart = Cart.objects.filter(userId=uid)
         for prod in cart:
             prod.subtotal = prod.productId.price * prod.quantity
@@ -18,10 +17,10 @@ def getUserCart(req, uid):
         for subTotal in cart:
             total = total + subTotal.subtotal
         
-        return render(req, "cart-detail.html", {"avatar_url": userLogued, "cart": cart, "total": total})
+        return render(req, "cart-detail.html", {"avatar_url": req.session["avatar_path"], "last_login": req.session["last_login"], "cart": cart, "total": total})
     except Exception as error:
         messages.error(req, error)
-        return render(req, "cart-detail.html", {"avatar_url": userLogued, "cart": cart, "total": total})
+        return render(req, "cart-detail.html", {"avatar_url": req.session["avatar_path"], "last_login": req.session["last_login"], "cart": cart, "total": total})
     
     
 
@@ -60,7 +59,6 @@ def buyCart(req, uid):
 @login_required
 def addToCart(req, uid, pid):
     searchForm = ProductSearchForm(req.GET)
-    userLogued = get_object_or_404(CustomUser, pk=req.user.id).avatar.url if req.user.id else '#'
     if req.method == 'POST':
         try:
             user = CustomUser.objects.get(pk=uid)
@@ -69,10 +67,10 @@ def addToCart(req, uid, pid):
             newProductToCart.save()
             products = Product.objects.all()
             messages.success(req, f"{product.title} was added to your cart")
-            return render(req, "home.html", {"avatar_url": userLogued, "products": products, 'searchForm': searchForm})
+            return render(req, "home.html", {"avatar_url": req.session["avatar_path"], "last_login": req.session["last_login"], "products": products, 'searchForm': searchForm})
         except Exception as error:
             products = Product.objects.all()
             messages.error(req, error)
-            return render(req, "home.html", {"avatar_url": userLogued, "products": products, 'searchForm': searchForm})
+            return render(req, "home.html", {"avatar_url": req.session["avatar_path"], "last_login": req.session["last_login"], "products": products, 'searchForm': searchForm})
         
     return getUserCart(req, uid)

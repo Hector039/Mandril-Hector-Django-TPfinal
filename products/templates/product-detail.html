@@ -4,31 +4,34 @@
 {% block title_h2 %} of selected product. {% endblock title_h2 %}
 
 {% block content %}
-    <div class="container row m-5">
-      <div class="col">
-        <img src="https://dummyimage.com/600x600/dee2e6/6c757d.jpg" class="img-fluid rounded-start" alt="...">
-      </div>
-      <div class="col align-self-center">
-          <h4 class="card-title">{{product.title}}</h4>
-          <p class="card-text">{{product.description}}</p>
-          <p class="card-text"><small class="text-muted">Price: ${{product.price}}</small></p>
-          <p class="card-text"><small class="text-muted">Stock: {{product.stock}}</small></p>
-          <p class="card-text"><small class="text-muted">Category: {{product.category}}</small></p>
-          <p class="card-text"><small class="text-muted">Owner: {{product.owner}}</small></p>
-          {% if user.is_authenticated and user == product.owner %}
-          <a href="{% url 'product-update' product.id %}" class="btn btn-primary">Update your product</a>
-          {% elif user.is_authenticated and user.id != product.owner %}
-          <a href="{% url 'msg-send' product.owner.id %}" class="btn btn-primary">Send message to owner</a>
-          <form action="{% url 'add-to-cart' user.id product.id %}" method="post">
-              {% csrf_token %}
-              <label for="quantity">Choose quantity:</label>
-              <input type="number" name="quantity" id="quantity" min="1" value="1" >
-              <button class="btn btn-primary">Add to cart</button>
-            </form>
-            <a href="{% url 'product-buy' product.id %}" class="btn btn-primary">Buy</a>
-        {% endif %}
-        <a class="btn btn-primary m-3" aria-current="page" href="{% url 'home' %}">Home</a>
-      </div>
-    </div>
-  {% endblock %}
-  
+<div class="container row m-5 {% if product.status %} prod-card-bg-stock {% else %} prod-card-bg-nostock {% endif %}">
+  <div class="col">
+    <img src="https://dummyimage.com/600x600/dee2e6/6c757d.jpg" class="img-fluid" alt="...">
+  </div>
+  <div class="col align-self-center">
+    <h4 class="card-title">{{product.title}}</h4>
+    <p class="card-text">{{product.description}}</p>
+    <p class="card-text"><small class="text-muted">Price: ${{product.price}}</small></p>
+    <p class="card-text"><small class="text-muted">Stock: {{product.stock}}</small></p>
+    <p class="card-text"><small class="text-muted">Category: {{product.category}}</small></p>
+    <p class="card-text"><small class="text-muted">Owner: {{product.owner}}</small></p>
+    <p class="card-text"><small class="text-muted">Created: {{product.created|date:"d/m/y"}}</small></p>
+    {% if user.is_authenticated and user == product.owner %}
+    <a href="{% url 'product-update' product.id %}" class="btn btn-primary">Update your product</a>
+    {% elif not product.status %}
+    <h4>Sorry! Product not avaliable</h4>
+    {% elif user.is_authenticated and user.id != product.owner %}
+    <a href="{% url 'msg-detail' product.owner.id %}" class="btn btn-primary">Send message to owner</a>
+    <form action="{% url 'add-to-cart' user.id product.id %}" method="post">
+      {% csrf_token %}
+      <label for="quantity">Choose quantity:</label>
+      <input type="number" name="quantity" id="quantity" min="1" value="1">
+      <button class="btn btn-primary">Add to cart</button>
+    </form>
+    <a href="{% url 'product-buy' product.id %}" class="btn btn-primary">Buy</a>
+    {% endif %}
+
+    <a class="btn btn-primary m-3" aria-current="page" href="{% url 'home' %}">Home</a>
+  </div>
+</div>
+{% endblock %}
